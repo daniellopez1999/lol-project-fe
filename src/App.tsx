@@ -1,22 +1,33 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import { BasicParticipantData, GenericResponse } from './types/types';
-import Base64Image from './components/Base64Image';
+import {
+  BasicParticipantData,
+  GenericResponse,
+  InfoDto,
+  MatchData,
+  MetadataDto,
+} from './types/types';
 
-function App() {
+import WinnerTeamHistoryMatch from './components/WinnerTeamHistoryMatch';
+import LoserTeamHistoryMatch from './components/LoserTeamHistoryMatch';
+
+function SummonersListAtMatch() {
   const [participantsData, setParticipantsData] = useState<
     BasicParticipantData[] | null
   >(null);
+  const [matchInfo, setMatchInfo] = useState<InfoDto | null>(null);
+  const [matchMetadata, setMatchMetadata] = useState<MetadataDto | null>(null);
   useEffect(() => {
     const fetchData = async () => {
       const url =
-        'http://localhost:3000/api/matches/match/EUW1_7269765313/EUW1';
+        'http://localhost:8080/api/matches/match/EUW1_7269765313/EUW1';
       console.log(url);
       try {
         const response = await fetch(url);
-        const data: GenericResponse<BasicParticipantData[]> =
-          await response.json();
-        setParticipantsData(data.data);
+        const data: GenericResponse<MatchData> = await response.json();
+        setParticipantsData(data.data.basicDataFromParticipants);
+        setMatchInfo(data.data.matchInfo);
+        setMatchMetadata(data.data.matchMetadata);
         console.log(data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -26,28 +37,32 @@ function App() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (participantsData && matchInfo && matchMetadata)
+      console.log({ participantsData, matchInfo, matchMetadata });
+  }, [matchMetadata, matchInfo, participantsData]);
+
   return (
-    <div>
-      {participantsData &&
-        participantsData.map((participant) => {
-          return (
-            <div>
-              <div>Summoner: {participant.riotIdGameName}</div>
-              <Base64Image
-                key={`${participant.puuid}_${participant.champion}`}
-                base64String={participant.champion.championImage}
-              />
-              <div>
-                Items:
-                {participant.items.map((item, index) => (
-                  <Base64Image key={index} base64String={item.image} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-    </div>
+    <>
+      <div>
+        {participantsData && matchInfo && (
+          <>
+            <WinnerTeamHistoryMatch
+              matchInfo={matchInfo}
+              participantsData={participantsData}
+            />
+
+            <h2>Losing Team</h2>
+
+            <LoserTeamHistoryMatch
+              matchInfo={matchInfo}
+              participantsData={participantsData}
+            />
+          </>
+        )}
+      </div>
+    </>
   );
 }
 
-export default App;
+export default SummonersListAtMatch;
