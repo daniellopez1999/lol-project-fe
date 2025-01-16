@@ -1,9 +1,9 @@
-import SummonersListAtMatch from '../App';
+import TeamsHistoryMatch from '../TeamsHistoryMatch';
 
 const App = () => {
   return (
     <div>
-      <SummonersListAtMatch />
+      <TeamsHistoryMatch />
     </div>
   );
 };

@@ -11,7 +11,7 @@ import {
 import WinnerTeamHistoryMatch from './components/WinnerTeamHistoryMatch';
 import LoserTeamHistoryMatch from './components/LoserTeamHistoryMatch';
 
-function SummonersListAtMatch() {
+function TeamsHistoryMatch() {
   const [participantsData, setParticipantsData] = useState<
     BasicParticipantData[] | null
   >(null);
@@ -65,4 +65,4 @@ function SummonersListAtMatch() {
   );
 }
 
-export default SummonersListAtMatch;
+export default TeamsHistoryMatch;
